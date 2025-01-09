@@ -1,9 +1,36 @@
 import React from "react";
-import DataTable from "react-data-table-component";
+import DataTable, { TableProps, TableRow } from "react-data-table-component";
 import styled, { css } from "styled-components";
-import { FONTSIZES, FONTWEIGHTS } from "../components/font-spec";
+import { FONTSIZES, FONTWEIGHTS } from "./font-spec";
 
-const Table = ({
+interface TableComponentProps<T extends TableRow> {
+  data: T[]; // Array of data for the table
+  columns: TableProps<T>["columns"]; // Columns definition
+  handleRowSelect?: (selectedRows: { selectedRows: T[] }) => void; // Callback for row selection
+  onRowClicked?: (row: T, event: React.MouseEvent) => void; // Callback for row click
+  className?: string; // Optional custom className
+  selectableRowsComponent?: React.ReactNode; // Custom component for selectable rows
+  selectableRows?: boolean; // Enable selectable rows
+  progressComponent?: React.ReactNode; // Component for loading state
+  progressPending?: boolean; // Loading state
+  pointer?: boolean; // Enable pointer cursor on rows
+  pagination?: boolean; // Enable pagination
+  paginationServer?: boolean; // Server-side pagination
+  paginationTotalRows?: number; // Total rows for server-side pagination
+  onChangeRowsPerPage?: (
+    currentRowsPerPage: number,
+    currentPage: number
+  ) => void; // Callback for rows per page change
+  onChangePage?: (page: number, totalRows: number) => void; // Callback for page change
+  border?: boolean; // Enable border for table rows
+  tableHeader?: boolean; // Custom styling for table header
+  selectableRowDisabled?: (row: T) => boolean; // Disable row selection conditionally
+  tableHeaderPink?: boolean; // Enable pink styling for table header
+  selectableRowSelected?: (row: T) => boolean; // Pre-select rows conditionally
+  dropdown?: boolean; // Custom dropdown styling
+}
+
+const Table = <T extends TableRow>({
   data,
   columns,
   handleRowSelect,
@@ -25,7 +52,7 @@ const Table = ({
   tableHeaderPink,
   selectableRowSelected,
   dropdown,
-}) => {
+}: TableComponentProps<T>): JSX.Element => {
   const TableData = React.useMemo(() => data, [data]);
   const TableColumns = React.useMemo(() => columns, [columns]);
 
@@ -61,7 +88,13 @@ const Table = ({
 
 export default Table;
 
-const TableWrapper = styled.div`
+const TableWrapper = styled.div<{
+  pointer?: boolean;
+  border?: boolean;
+  tableHeader?: boolean;
+  tableHeaderPink?: boolean;
+  dropdown?: boolean;
+}>`
   .rdt_Table {
     width: 100%; /* Ensure the table fits the width of the container */
     min-height: 60vh;

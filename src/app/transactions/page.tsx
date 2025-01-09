@@ -18,7 +18,7 @@ const TransactionsPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   // const [selectedRows, setSelectedRows] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
+  // const [selectAll, setSelectAll] = useState(false);
 
   const [status, setStatus] = useState("");
 
@@ -34,7 +34,7 @@ const TransactionsPage = () => {
   // };
 
   const dispatch = useDispatch<AppDispatch>();
-  const { transactions, userAccounts } = useSelector(
+  const { transactions } = useSelector(
     (state: RootState) => state.transactions
   );
 
@@ -42,9 +42,9 @@ const TransactionsPage = () => {
     dispatch(fetchAccounTransactions());
   }, [dispatch]);
 
-  const handleSelectAll = () => {
-    setSelectAll(!selectAll);
-  };
+  // const handleSelectAll = () => {
+  //   setSelectAll(!selectAll);
+  // };
 
   // const data = [
   //   {
@@ -114,10 +114,8 @@ const TransactionsPage = () => {
 
   const columns = [
     {
-      name: (
-        <input type="checkbox" onChange={handleSelectAll} checked={selectAll} />
-      ),
-      cell: (row) => (
+      name: <input type="checkbox" />,
+      cell: (row: any) => (
         <input
           type="checkbox"
           // onChange={() => handleCheckboxChange(row)}
@@ -128,34 +126,34 @@ const TransactionsPage = () => {
     },
     {
       name: "AMOUNT",
-      selector: (row) => row?.amount,
+      selector: (row: any) => row?.amount,
       sortable: true,
     },
     {
       name: "TRANSACTION ID",
-      selector: (row) => row?.transactionId,
+      selector: (row: any) => row?.transactionId,
       sortable: true,
     },
     {
       name: "TRANSACTION TYPE",
-      selector: (row) => row?.transactionType,
+      selector: (row: any) => row?.transactionType,
       sortable: true,
     },
     {
       name: "DATE",
-      selector: (row) => row?.date,
+      selector: (row: any) => row?.date,
       sortable: true,
     },
     {
       name: "TIME",
-      selector: (row) => row?.time,
+      selector: (row: any) => row?.time,
       sortable: true,
     },
     {
       name: "STATUS",
-      selector: (row) => row?.status,
+      selector: (row: any) => row?.status,
       sortable: true,
-      cell: (row) => (
+      cell: (row: any) => (
         <button
           className={`border px-3 py-2 rounded-[20px] flex justify-center items-center gap-2 w-28 ${
             row?.status === "Failed"

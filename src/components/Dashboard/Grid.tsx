@@ -16,10 +16,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
-import {
-  fetchAccounTransactions,
-  fetchUserAccountDetails,
-} from "../../features/Transactions/transactionSlice";
+import { fetchUserAccountDetails } from "../../features/Transactions/transactionSlice";
 import { useEffect } from "react";
 
 const data = [
@@ -38,29 +35,19 @@ const data = [
 ];
 
 export const Grid = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const dispatch = useDispatch<AppDispatch>();
-  const { transactions, userAccounts } = useSelector(
+  const { userAccounts } = useSelector(
     (state: RootState) => state.transactions
   );
 
   useEffect(() => {
-    dispatch(fetchAccounTransactions());
-  }, [dispatch]);
-  useEffect(() => {
     dispatch(fetchUserAccountDetails());
   }, [dispatch]);
 
-  const formatAmount = (amount: any) => {
-    if (!amount) return "0.00";
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) return "0.00";
-    return parsedAmount.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
+  if (userAccounts?.loading) return <p>Loading...</p>;
+  if (userAccounts?.error) return <p>Error: {userAccounts?.error}</p>;
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div className="p-4">
       <div className="mt-4 mb-4 border-b border-stone-300">
@@ -75,6 +62,7 @@ export const Grid = () => {
           value={userAccounts?.data && userAccounts?.data[0]?.amount}
           pillText="copy"
           trend="up"
+          period=""
           bank={userAccounts?.data && userAccounts?.data[0]?.bankName}
         />
 

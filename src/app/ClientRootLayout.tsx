@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/SideBar";
-import Header from "@/components/Dashboard/Header";
+import Sidebar from "../components/SideBar";
+import Header from "../components/Dashboard/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 

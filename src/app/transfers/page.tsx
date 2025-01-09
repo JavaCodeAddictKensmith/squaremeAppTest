@@ -1,10 +1,10 @@
 import React from "react";
-import TableEmptyState from "@/components/TableEmptySate";
+import TableEmptyState from "../../components/TableEmptySate";
 
 const TransfersPage = () => {
   return (
     <div>
-      Coming Soon
+      <h1>Heading</h1>
       <TableEmptyState dashboard />
     </div>
   );

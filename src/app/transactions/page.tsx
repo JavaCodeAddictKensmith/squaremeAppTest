@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useMediaQuery } from "@/components/hooks/useMediaQuery";
+import { useMediaQuery } from "../../components/hooks/useMediaQuery";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import uploadcloud from "../../../public/svg/upload-cloud.svg";

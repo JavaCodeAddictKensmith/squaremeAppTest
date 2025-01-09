@@ -1,5 +1,5 @@
 import React from "react";
-import TableEmptyState from "@/components/TableEmptySate";
+import TableEmptyState from "../../components/TableEmptySate";
 const GetStartedPage = () => {
   return (
     <div>

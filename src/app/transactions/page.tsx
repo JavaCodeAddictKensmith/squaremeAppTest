@@ -7,11 +7,20 @@ import uploadcloud from "../../../public/svg/upload-cloud.svg";
 import Image from "next/image";
 import Table from "../../components/Table";
 
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { fetchAccounTransactions } from "../../features/Transactions/transactionSlice";
+import { useEffect } from "react";
+
+import * as XLSX from "xlsx";
+
 const TransactionsPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+
+  const [status, setStatus] = useState("");
 
   // State for date range selection
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
@@ -20,79 +29,88 @@ const TransactionsPage = () => {
   ]);
   const [startDate, endDate] = dateRange;
 
-  const handleCheckboxChange = (row) => {
-    // Placeholder for checkbox logic
-  };
+  // const handleCheckboxChange = (row) => {
+  //   // Placeholder for checkbox logic
+  // };
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions, userAccounts } = useSelector(
+    (state: RootState) => state.transactions
+  );
+
+  useEffect(() => {
+    dispatch(fetchAccounTransactions());
+  }, [dispatch]);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
   };
 
-  const data = [
-    {
-      id: "1",
-      amount: "N43,644",
-      transactionId: "TR_8401857902",
-      transactionType: "Transfer",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Processed",
-    },
-    {
-      id: "2",
-      amount: "N35,471",
-      transactionId: "TR_8401857902",
-      transactionType: "Withdrawal",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Failed",
-    },
-    {
-      id: "3",
-      amount: "N43,644",
-      transactionId: "TR_8401857902",
-      transactionType: "Deposit",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Processed",
-    },
-    {
-      id: "4",
-      amount: "N35,471",
-      transactionId: "TR_8401857902",
-      transactionType: "Request",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Failed",
-    },
-    {
-      id: "5",
-      amount: "N43,644",
-      transactionId: "TR_8401857902",
-      transactionType: "Transfer",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Processed",
-    },
-    {
-      id: "6",
-      amount: "N35,471",
-      transactionId: "TR_8401857902",
-      transactionType: "Transfer",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Failed",
-    },
-    {
-      id: "2",
-      amount: "N38,471",
-      transactionId: "TR_8401857902",
-      transactionType: "Transfer",
-      date: "Feb 12, 2022",
-      time: "10:30AM",
-      status: "Processed",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: "1",
+  //     amount: "N43,644",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Transfer",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Processed",
+  //   },
+  //   {
+  //     id: "2",
+  //     amount: "N35,471",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Withdrawal",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Failed",
+  //   },
+  //   {
+  //     id: "3",
+  //     amount: "N43,644",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Deposit",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Processed",
+  //   },
+  //   {
+  //     id: "4",
+  //     amount: "N35,471",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Request",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Failed",
+  //   },
+  //   {
+  //     id: "5",
+  //     amount: "N43,644",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Transfer",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Processed",
+  //   },
+  //   {
+  //     id: "6",
+  //     amount: "N35,471",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Transfer",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Failed",
+  //   },
+  //   {
+  //     id: "2",
+  //     amount: "N38,471",
+  //     transactionId: "TR_8401857902",
+  //     transactionType: "Transfer",
+  //     date: "Feb 12, 2022",
+  //     time: "10:30AM",
+  //     status: "Processed",
+  //   },
+  // ];
 
   const columns = [
     {
@@ -102,8 +120,8 @@ const TransactionsPage = () => {
       cell: (row) => (
         <input
           type="checkbox"
-          onChange={() => handleCheckboxChange(row)}
-          checked={selectedRows.includes(row.id)}
+          // onChange={() => handleCheckboxChange(row)}
+          // checked={selectedRows.includes(row.id)}
         />
       ),
       width: "50px",
@@ -157,6 +175,54 @@ const TransactionsPage = () => {
     },
   ];
 
+  const filteredBids = transactions?.data?.filter((bid) => {
+    if (status === "") return true;
+    if (status === "Request") return bid?.transactionType === "Request";
+
+    if (status === "Deposit") return bid?.transactionType === "Deposit";
+
+    if (status === "Transfer") return bid?.transactionType === "Transfer";
+    if (status === "Withdarawal") return bid?.transactionType === "Withdarawal";
+    if (status === "Failed") return bid?.status === "Failed";
+    if (status === "Processed") return bid?.status === "Processed";
+    return true;
+  });
+
+  /*
+  {
+    "id": "1",
+    "amount": "N43,644",
+    "transactionId": "TR_8401857902",
+    "transactionType": "Transfer",
+    "date": "Feb 12, 2022",
+    "time": "10:30AM",
+    "status": "Processed"
+  }
+
+
+
+  */
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      filteredBids.map((row) => ({
+        Amount: row?.amount,
+        "Transaction Id": row?.transactionId,
+        "Transaction Type": row?.transactionType,
+        " Date": row?.date,
+        " Time": row?.time,
+
+        Status: row?.status,
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "SquaremeData");
+    XLSX.writeFile(wb, "Transactions.xlsx");
+  };
+
+  if (transactions?.loading) return <p>Loading...</p>;
+  if (transactions?.error) return <p>Error: {transactions?.error}</p>;
+
   return (
     <div className="w-full min-h-[700px] p-4 rounded">
       {!isMobile && (
@@ -164,9 +230,30 @@ const TransactionsPage = () => {
           <div className="flex flex-wrap gap-4">
             <div className="relative">
               <div className="flex items-center gap-3">
-                <select className="shadow-sm text-sm focus:outline-none cursor-pointer h-10 px-5 py-2.5 rounded">
+                <select
+                  className="shadow-sm text-sm focus:outline-none cursor-pointer h-10 px-5 py-2.5 rounded"
+                  onChange={(e) => setStatus(e.target.value)}
+                >
                   <option value="" key="all-accounts">
                     All Accounts
+                  </option>
+                  <option value="Deposit" key="deposit">
+                    Deposit
+                  </option>
+                  <option value="Request" key="request">
+                    Requests
+                  </option>
+                  <option value="Transfer" key="transfer">
+                    Transfer
+                  </option>
+                  <option value="Withdarawal" key="withdrawal">
+                    Withdrawal
+                  </option>
+                  <option value="Processed" key="processed">
+                    Processed
+                  </option>
+                  <option value="Failed" key="failed">
+                    Failed
                   </option>
                 </select>
               </div>
@@ -204,7 +291,10 @@ const TransactionsPage = () => {
                 </svg>
               </div>
             </div>
-            <button className="border border-gray-300 px-4 py-2 rounded-md flex items-center gap-2">
+            <button
+              className="border border-gray-300 px-4 py-2 rounded-md flex items-center gap-2"
+              onClick={exportToExcel}
+            >
               <Image
                 src={uploadcloud}
                 alt="uploadcloud"
@@ -221,15 +311,47 @@ const TransactionsPage = () => {
           <div className="flex justify-between flex-wrap py-3">
             {" "}
             <div className="relative">
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <select className="shadow-sm text-sm focus:outline-none cursor-pointer h-10 px-5 py-2.5 rounded">
                   <option value="" key="all-accounts">
                     All Accounts
                   </option>
                 </select>
+              </div> */}
+
+              <div className="flex items-center gap-3">
+                <select
+                  className="shadow-sm text-sm focus:outline-none cursor-pointer h-10 px-5 py-2.5 rounded"
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="" key="all-accounts">
+                    All Accounts
+                  </option>
+                  <option value="Deposit" key="deposit">
+                    Deposit
+                  </option>
+                  <option value="Request" key="request">
+                    Requests
+                  </option>
+                  <option value="Transfer" key="transfer">
+                    Transfer
+                  </option>
+                  <option value="Withdarawal" key="withdrawal">
+                    Withdrawal
+                  </option>
+                  <option value="Processed" key="processed">
+                    Processed
+                  </option>
+                  <option value="Failed" key="failed">
+                    Failed
+                  </option>
+                </select>
               </div>
             </div>
-            <button className="border border-gray-300 px-4 py-2 rounded-md flex items-center gap-2">
+            <button
+              className="border border-gray-300 px-4 py-2 rounded-md flex items-center gap-2"
+              onClick={exportToExcel}
+            >
               <Image
                 src={uploadcloud}
                 alt="uploadcloud"
@@ -280,7 +402,7 @@ const TransactionsPage = () => {
           <div className="flex flex-col">
             <Table
               columns={columns}
-              data={data}
+              data={filteredBids}
               className="border-stone-300 shadow-sm rounded-[6px]"
             />
           </div>
@@ -288,44 +410,48 @@ const TransactionsPage = () => {
 
         {isMobile && (
           <div>
-            {data.map((ele) => (
-              <div className="border border-gray-300 px-4 rounded-md  items-center gap-2 w-full mt-5 py-4 text-[#252C32] ">
-                <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3 ">
-                  <div>AMOUNT:</div>
-                  <div>{ele.amount}</div>{" "}
-                </div>
+            {transactions?.data &&
+              filteredBids?.map((ele) => (
+                <div
+                  className="border border-gray-300 px-4 rounded-md  items-center gap-2 w-full mt-5 py-4 text-[#252C32] "
+                  key={`${ele.id}`}
+                >
+                  <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3 ">
+                    <div>AMOUNT:</div>
+                    <div>{ele.amount}</div>{" "}
+                  </div>
 
-                <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
-                  <div className="text-[#252C32]">TRANSACTION TYPE:</div>
-                  <div>{ele.transactionType}</div>{" "}
-                </div>
+                  <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
+                    <div className="text-[#252C32]">TRANSACTION TYPE:</div>
+                    <div>{ele.transactionType}</div>{" "}
+                  </div>
 
-                <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
-                  <div>DATE:</div>
-                  <div>{ele.date}</div>{" "}
-                </div>
+                  <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
+                    <div>DATE:</div>
+                    <div>{ele.date}</div>{" "}
+                  </div>
 
-                <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
-                  <div>SATUS:</div>
-                  <button
-                    className={`border px-3 py-2 rounded-[20px] flex justify-center items-center gap-2 w-28 py-3${
-                      ele?.status === "Failed"
-                        ? "bg-[#fbecee] border-[#e26a73] text-[#8a4447]"
-                        : "bg-[#f1fcee] border-[#8fcaa7] text-[#3c5e2e]"
-                    }`}
-                  >
-                    <div
-                      className={`h-2 w-2 rounded-full ${
+                  <div className=" flex w-full border-b-[1px] border-gray-300 justify-between items-center py-3">
+                    <div>SATUS:</div>
+                    <button
+                      className={`border px-3 py-2 rounded-[20px] flex justify-center items-center gap-2 w-28 py-3${
                         ele?.status === "Failed"
-                          ? "bg-[#de505b]"
-                          : "bg-[#a7ec8c]"
+                          ? "bg-[#fbecee] border-[#e26a73] text-[#8a4447]"
+                          : "bg-[#f1fcee] border-[#8fcaa7] text-[#3c5e2e]"
                       }`}
-                    ></div>
-                    {ele?.status}
-                  </button>
+                    >
+                      <div
+                        className={`h-2 w-2 rounded-full ${
+                          ele?.status === "Failed"
+                            ? "bg-[#de505b]"
+                            : "bg-[#a7ec8c]"
+                        }`}
+                      ></div>
+                      {ele?.status}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>

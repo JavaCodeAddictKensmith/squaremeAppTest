@@ -1,7 +1,13 @@
 import React from "react";
+import TableEmptyState from "@/components/TableEmptySate";
 
 const AccountsPage = () => {
-  return <div>Accounts coming ssoon</div>;
+  return (
+    <div>
+      Coming Soon
+      <TableEmptyState dashboard />
+    </div>
+  );
 };
 
 export default AccountsPage;

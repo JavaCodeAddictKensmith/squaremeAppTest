@@ -11,13 +11,6 @@ import icon from "../../public/svg/Icon.svg";
 import document from "../../public/svg/document.svg";
 import settings from "../../public/svg/setting-2.svg";
 
-import {
-  FiDollarSign,
-  FiHome,
-  FiLink,
-  FiPaperclip,
-  FiUsers,
-} from "react-icons/fi";
 import Image from "next/image";
 
 const sidebarItems = [
@@ -102,12 +95,12 @@ export default function Sidebar({ open }: SidebarProps) {
       } lg:translate-x-0`}
     >
       <nav className="h-full flex flex-col justify-between">
-        <div className="px-10 py-6 space-y-8">
+        <div className=" py-6 space-y-8">
           {sidebarItems.map((item) => (
             <Link key={item.href} href={item.href} passHref>
               <div
                 // variant={pathname === item.href ? "secondary" : "ghost"}
-                className={`w-full justify-start  gap-2 flex py-3 ${
+                className={`w-full justify-start  gap-2 flex py-3 px-10 ${
                   pathname === item.href
                     ? "bg-[#4975E0] text-white"
                     : "text-gray-600 hover:bg-gray-100"

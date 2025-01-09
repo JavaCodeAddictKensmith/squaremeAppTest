@@ -14,6 +14,14 @@ import {
 
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import {
+  fetchAccounTransactions,
+  fetchUserAccountDetails,
+} from "../../features/Transactions/transactionSlice";
+import { useEffect } from "react";
+
 const data = [
   { name: "Jan", uv: 250, pv: 2400, amt: 2400 },
   { name: "Feb", uv: 450, pv: 2400, amt: 2400 },
@@ -30,6 +38,28 @@ const data = [
 ];
 
 export const Grid = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions, userAccounts } = useSelector(
+    (state: RootState) => state.transactions
+  );
+
+  useEffect(() => {
+    dispatch(fetchAccounTransactions());
+  }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchUserAccountDetails());
+  }, [dispatch]);
+
+  const formatAmount = (amount: any) => {
+    if (!amount) return "0.00";
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) return "0.00";
+    return parsedAmount.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div className="p-4">
@@ -42,11 +72,10 @@ export const Grid = () => {
       <div className="mt-16">
         <Card
           title="ACCOUNT DETAILS"
-          value="8000000000"
+          value={userAccounts?.data && userAccounts?.data[0]?.amount}
           pillText="copy"
           trend="up"
-          period="From Jan 1st - Jul 31st"
-          bank="STERLING BANK"
+          bank={userAccounts?.data && userAccounts?.data[0]?.bankName}
         />
 
         <div className="w-full min-h-[700px] p-4 rounded border border-stone-300 mt-6">
@@ -58,7 +87,7 @@ export const Grid = () => {
                     <span>Showing data for</span>
                     <select className="shadow-sm text-sm focus:outline-none cursor-pointer h-10 px-5 py-2.5 rounded border border-gray-400">
                       <option value="" key="all-bids">
-                        Last Seven Days
+                        Last 7 Days
                       </option>
                       {/* <option value="BID_ACTIVE" key="bid-active">
                         Bid Active Request
@@ -112,14 +141,18 @@ export const Grid = () => {
                     Revenue
                   </span>
                   <span className="text-sm text-gray-500">
-                    <span className="text-green-400">+ 0.00%</span> Vs last 7
-                    days
+                    <span className="text-green-400">
+                      +{" "}
+                      {userAccounts?.data && userAccounts?.data[0]?.revenuePer}{" "}
+                      %
+                    </span>{" "}
+                    Vs last 7 days
                   </span>
                 </div>
               )}
               {!isMobile && (
                 <div className="mt-3 text-black text-xl font-bold">
-                  N 0.00{" "}
+                  {userAccounts?.data && userAccounts?.data[0]?.revenue}{" "}
                   <span className="text-sm font-medium">in total value</span>
                 </div>
               )}

@@ -1,6 +1,7 @@
 // app/layout.tsx (Server Component)
 import type { Metadata } from "next";
 import ClientRootLayout from "./ClientRootLayout"; // This will contain your current layout logic
+import { StoreProvider } from "@/store/StoreProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,10 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <ClientRootLayout>{children}</ClientRootLayout>
-      </body>
-    </html>
+    <StoreProvider>
+      <html lang="en">
+        <body>
+          <ClientRootLayout>{children}</ClientRootLayout>
+        </body>
+      </html>
+    </StoreProvider>
   );
 }

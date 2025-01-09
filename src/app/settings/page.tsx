@@ -1,7 +1,13 @@
 import React from "react";
+import TableEmptyState from "@/components/TableEmptySate";
 
 const SettingsPage = () => {
-  return <div>Settings coming soon</div>;
+  return (
+    <div>
+      Coming Soon
+      <TableEmptyState dashboard />
+    </div>
+  );
 };
 
 export default SettingsPage;

@@ -1,7 +1,13 @@
 import React from "react";
+import TableEmptyState from "@/components/TableEmptySate";
 
 const TransfersPage = () => {
-  return <div>Transfers coming up</div>;
+  return (
+    <div>
+      Coming Soon
+      <TableEmptyState dashboard />
+    </div>
+  );
 };
 
 export default TransfersPage;

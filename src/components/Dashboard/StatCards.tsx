@@ -1,5 +1,7 @@
 import React from "react";
 import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
+import copy from "../../../public/svg/copy.svg";
+import Image from "next/image";
 
 export const StatCards = () => {
   return (
@@ -35,33 +37,43 @@ export const Card = ({
   pillText,
   trend,
   period,
+  bank,
 }: {
   title: string;
   value: string;
   pillText: string;
   trend: "up" | "down";
   period: string;
+  bank?: string;
 }) => {
   return (
     <div className=" p-4 rounded border border-stone-300 w-[400px]">
-      <div className="flex mb-8 items-start justify-between">
+      <h3 className="text-stone-500 mb-2 text-base">{title}</h3>
+
+      <div className="text-[#000000] mb-2 text-sm">{bank}</div>
+      {/* <p className="text-xs text-stone-500">{period}</p> */}
+
+      <div className="flex mb-2 items-start justify-between mt-3">
         <div>
-          <h3 className="text-stone-500 mb-2 text-sm">{title}</h3>
-          <p className="text-3xl font-semibold">{value}</p>
+          {/* <h3 className="text-stone-500 mb-2 text-sm">{title}</h3> */}
+          <p className=" text-2xl font-bold">{value}</p>
         </div>
 
         <span
-          className={`text-xs flex items-center gap-1 font-medium px-2 py-1 rounded ${
-            trend === "up"
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
+          className={`text-xs flex items-center gap-1 font-medium px-2 rounded ${"bg-[#9F56D4]/30 text-[#9F56D4]"}`}
         >
-          {trend === "up" ? <FiTrendingUp /> : <FiTrendingDown />} {pillText}
+          {
+            <Image
+              src={copy}
+              alt="dashboard"
+              width={20}
+              height={20}
+              className=""
+            />
+          }{" "}
+          {pillText}
         </span>
       </div>
-
-      <p className="text-xs text-stone-500">{period}</p>
     </div>
   );
 };

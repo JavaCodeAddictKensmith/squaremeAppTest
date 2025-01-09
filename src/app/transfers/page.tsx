@@ -4,7 +4,7 @@ import TableEmptyState from "../../components/TableEmptySate";
 const TransfersPage = () => {
   return (
     <div>
-      <h1>Heading</h1>
+      <h1>Coming Soon</h1>
       <TableEmptyState dashboard />
     </div>
   );

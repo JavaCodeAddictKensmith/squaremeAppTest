@@ -3,7 +3,7 @@ import TableEmptyState from "../../components/TableEmptySate";
 const GetStartedPage = () => {
   return (
     <div>
-      Coming Soon
+      <h1>Coming Soon</h1>
       <TableEmptyState dashboard />
     </div>
   );
